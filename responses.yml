@@ -1,0 +1,8 @@
+responses:
+  "what colour is the sky?": "The sky is blue during a clear day due to a phenomenon called Rayleigh scattering."
+  "who is the president?": "This is a mock response. In a production environment, this would be replaced with accurate, up-to-date information."
+  "tell me a joke": "Why don't programmers like nature? It has too many bugs!"
+  "what is the meaning of life?": "According to this mock response, the meaning of life is to write better mock servers."
+
+defaults:
+  unknown_response: "I don't know the answer to that. This is a mock response."
