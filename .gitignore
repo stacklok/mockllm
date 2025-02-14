@@ -39,3 +39,4 @@ ENV/
 .env
 .env.local
 .env.*.local
+responses.yml

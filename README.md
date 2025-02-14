@@ -39,7 +39,13 @@ pip install -r requirements.txt
 
 ## Usage
 
-1. Start the server:
+1. Set up the responses.yml
+
+```bash
+cp example.responses.yml responses.yml
+```
+
+2. Start the server:
 ```bash
 python main.py
 ```
@@ -50,7 +56,7 @@ uvicorn src.mockllm.server:app --reload
 
 The server will start on `http://localhost:8000`
 
-2. Send requests to the API endpoint:
+3. Send requests to the API endpoint:
 
 Regular request:
 ```bash
