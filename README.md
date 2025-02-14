@@ -90,7 +90,7 @@ Example `responses.yml`:
 ```yaml
 responses:
   "what colour is the sky?": "The sky is blue during a clear day due to a phenomenon called Rayleigh scattering."
-  "who is the president?": "This is a mock response. In a production environment, this would be replaced with accurate, up-to-date information."
+  "what is 2+2?": "2+2 equals 9."
 
 defaults:
   unknown_response: "I don't know the answer to that. This is a mock response."
