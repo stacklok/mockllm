@@ -1,0 +1,79 @@
+[build-system]
+requires = ["setuptools>=45", "wheel", "setuptools_scm>=6.2"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "mockllm"
+dynamic = ["version"]
+description = "A mock server that mimics OpenAI and Anthropic API formats for testing"
+readme = "README.md"
+requires-python = ">=3.8"
+license = {text = "Apache-2.0"}
+keywords = ["mock", "llm", "openai", "anthropic", "testing"]
+authors = [
+    {name = "Luke Hinds", email = "luke@stacklok.com"}
+]
+classifiers = [
+    "Development Status :: 4 - Beta",
+    "Intended Audience :: Developers",
+    "License :: OSI Approved :: Apache Software License",
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3.8",
+    "Programming Language :: Python :: 3.9",
+    "Programming Language :: Python :: 3.10",
+    "Programming Language :: Python :: 3.11",
+    "Topic :: Software Development :: Testing",
+]
+dependencies = [
+    "fastapi>=0.68.0",
+    "uvicorn>=0.15.0",
+    "pydantic>=2.0.0",
+    "python-json-logger>=2.0.0",
+    "pyyaml>=5.4.1",
+    "watchdog>=2.1.0",
+]
+
+[project.optional-dependencies]
+dev = [
+    "pytest>=6.0",
+    "pytest-asyncio>=0.15.0",
+    "black>=21.0",
+    "isort>=5.0",
+    "mypy>=0.900",
+    "ruff>=0.1.0",
+]
+
+[project.urls]
+Homepage = "https://github.com/stacklok/mockllm"
+Repository = "https://github.com/stacklok/mockllm.git"
+Issues = "https://github.com/stacklok/mockllm/issues"
+
+[tool.setuptools]
+packages = ["mockllm"]
+package-dir = {"" = "src"}
+
+[tool.setuptools_scm]
+write_to = "src/mockllm/_version.py"
+
+[tool.black]
+line-length = 88
+target-version = ["py38"]
+include = '\.pyi?$'
+
+[tool.isort]
+profile = "black"
+multi_line_output = 3
+line_length = 88
+
+[tool.mypy]
+python_version = "3.8"
+warn_return_any = true
+warn_unused_configs = true
+disallow_untyped_defs = true
+check_untyped_defs = true
+
+[tool.ruff]
+line-length = 88
+target-version = "py38"
+select = ["E", "F", "B", "I"]
+ignore = []
