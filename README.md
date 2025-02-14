@@ -1,6 +1,7 @@
 # Mock LLM Server
 
-A mock LLM server that mimics OpenAI's API format. Instead of calling an actual language model,
+A FastAPI-based mock LLM server that mimics OpenAI and Anthropic API formats. Instead of calling actual language models,
+
 it uses predefined responses from a YAML configuration file. 
 
 This is made for when you want a deterministic response for testing or development purposes.
@@ -9,7 +10,7 @@ Check out the [CodeGate](https://github.com/stacklok/codegate) when you're done 
 
 ## Features
 
-- OpenAI-compatible API endpoint
+- OpenAI and Anthropic compatible API endpoints
 - Streaming support (character-by-character response streaming)
 - Configurable responses via YAML file
 - Hot-reloading of response configurations
@@ -56,7 +57,9 @@ uvicorn src.mockllm.server:app --reload
 
 The server will start on `http://localhost:8000`
 
-3. Send requests to the API endpoint:
+3. Send requests to the API endpoints:
+
+### OpenAI Format
 
 Regular request:
 ```bash
@@ -76,6 +79,33 @@ curl -X POST http://localhost:8000/v1/chat/completions \
   -H "Content-Type: application/json" \
   -d '{
     "model": "mock-llm",
+    "messages": [
+      {"role": "user", "content": "what colour is the sky?"}
+    ],
+    "stream": true
+  }'
+```
+
+### Anthropic Format
+
+Regular request:
+```bash
+curl -X POST http://localhost:8000/v1/messages \
+  -H "Content-Type: application/json" \
+  -d '{
+    "model": "claude-3-sonnet-20240229",
+    "messages": [
+      {"role": "user", "content": "what colour is the sky?"}
+    ]
+  }'
+```
+
+Streaming request:
+```bash
+curl -X POST http://localhost:8000/v1/messages \
+  -H "Content-Type: application/json" \
+  -d '{
+    "model": "claude-3-sonnet-20240229",
     "messages": [
       {"role": "user", "content": "what colour is the sky?"}
     ],
@@ -108,7 +138,9 @@ The server automatically detects changes to `responses.yml` and reloads the conf
 
 ## API Format
 
-### Request Format
+### OpenAI Format
+
+#### Request Format
 
 ```json
 {
@@ -122,7 +154,7 @@ The server automatically detects changes to `responses.yml` and reloads the conf
 }
 ```
 
-### Response Format
+#### Response Format
 
 Regular response:
 ```json
@@ -163,6 +195,55 @@ data: {"id":"mock-999","object":"chat.completion.chunk","created":1700000000,"mo
 data: [DONE]
 ```
 
+### Anthropic Format
+
+#### Request Format
+
+```json
+{
+  "model": "claude-3-sonnet-20240229",
+  "messages": [
+    {"role": "user", "content": "what colour is the sky?"}
+  ],
+  "max_tokens": 1024,
+  "stream": false
+}
+```
+
+#### Response Format
+
+Regular response:
+```json
+{
+  "id": "mock-123",
+  "type": "message",
+  "role": "assistant",
+  "model": "claude-3-sonnet-20240229",
+  "content": [
+    {
+      "type": "text",
+      "text": "The sky is blue during a clear day due to a phenomenon called Rayleigh scattering."
+    }
+  ],
+  "usage": {
+    "input_tokens": 10,
+    "output_tokens": 5,
+    "total_tokens": 15
+  }
+}
+```
+
+Streaming response (Server-Sent Events format):
+```
+data: {"type":"message_delta","id":"mock-123","delta":{"type":"content_block_delta","index":0,"delta":{"text":"T"}}}
+
+data: {"type":"message_delta","id":"mock-123","delta":{"type":"content_block_delta","index":0,"delta":{"text":"h"}}}
+
+... (character by character)
+
+data: [DONE]
+```
+
 ## Error Handling
 
 The server includes comprehensive error handling:
@@ -170,11 +251,3 @@ The server includes comprehensive error handling:
 - Invalid requests return 400 status codes with descriptive messages
 - Server errors return 500 status codes with error details
 - All errors are logged using JSON format
-
-## Logging
-
-The server uses JSON-formatted logging
-
-- Incoming request details
-- Response configuration loading
-- Error messages and stack traces
