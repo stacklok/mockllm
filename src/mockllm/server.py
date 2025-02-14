@@ -1,5 +1,5 @@
 import logging
-from typing import AsyncGenerator, Optional, Union
+from typing import AsyncGenerator, Union
 
 from fastapi import FastAPI, HTTPException
 from fastapi.responses import StreamingResponse
@@ -9,16 +9,13 @@ from .config import ResponseConfig
 from .models import (ChatRequest, ChatResponse, DeltaMessage,
                     StreamChoice, StreamResponse)
 
-# Configure logging
 log_handler = logging.StreamHandler()
 log_handler.setFormatter(jsonlogger.JsonFormatter())
 logging.basicConfig(level=logging.INFO, handlers=[log_handler])
 logger = logging.getLogger(__name__)
 
-# Initialize FastAPI app
 app = FastAPI(title="Mock LLM Server")
 
-# Initialize response configuration
 response_config = ResponseConfig()
 
 async def stream_response(content: str, model: str) -> AsyncGenerator[str, None]:
@@ -63,33 +60,29 @@ async def stream_response(content: str, model: str) -> AsyncGenerator[str, None]
 async def chat_completion(request: ChatRequest) -> Union[ChatResponse, StreamingResponse]:
     """Handle chat completion requests, supporting both regular and streaming responses."""
     try:
-        # Log incoming request
         logger.info("Received chat completion request", extra={
             "model": request.model,
             "message_count": len(request.messages),
             "stream": request.stream
         })
 
-        # Get the last user message
         last_message = next(
             (msg for msg in reversed(request.messages) if msg.role == "user"),
             None
         )
-        
+
         if not last_message:
             raise HTTPException(
                 status_code=400,
                 detail="No user message found in request"
             )
 
-        # Handle streaming response
         if request.stream:
             return StreamingResponse(
                 stream_response(last_message.content, request.model),
                 media_type="text/event-stream"
             )
 
-        # Handle regular response
         response_content = response_config.get_response(last_message.content)
 
         # Calculate mock token counts

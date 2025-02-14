@@ -1,5 +1,5 @@
 """
-Mock LLM Server - A FastAPI-based mock LLM server that mimics OpenAI's API format
+Mock LLM Server - You will do what I tell you!
 """
 
 __version__ = "0.1.0"

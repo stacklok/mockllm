@@ -6,7 +6,6 @@ import yaml
 from fastapi import HTTPException
 from pythonjsonlogger import jsonlogger
 
-# Configure logging
 log_handler = logging.StreamHandler()
 log_handler.setFormatter(jsonlogger.JsonFormatter())
 logging.basicConfig(level=logging.INFO, handlers=[log_handler])
@@ -14,7 +13,7 @@ logger = logging.getLogger(__name__)
 
 class ResponseConfig:
     """Handles loading and managing response configurations from YAML."""
-    
+
     def __init__(self, yaml_path: str = "responses.yml"):
         self.yaml_path = yaml_path
         self.last_modified = 0

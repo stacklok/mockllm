@@ -1,8 +1,11 @@
 # Mock LLM Server
 
-A FastAPI-based mock LLM server that mimics OpenAI's API format. Instead of calling an actual language model, it uses predefined responses from a YAML configuration file. Made for when you want a deterministic response for testing or development purposes.
+A FastAPI-based mock LLM server that mimics OpenAI's API format. Instead of calling an actual language model,
+it uses predefined responses from a YAML configuration file. 
 
-I wrote this for the CodeGate project, to mock out certain responses to develop, test and validate certain features. Check it out [here](https://github.com/stacklok/codegate).
+This is made for when you want a deterministic response for testing or development purposes.
+
+Check out the [CodeGate](https://github.com/stacklok/codegate) when you're done here!.
 
 ## Features
 
