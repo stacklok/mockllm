@@ -1,6 +1,8 @@
 # Mock LLM Server
 
-A FastAPI-based mock LLM server that mimics OpenAI's API format. Instead of calling an actual language model, it uses predefined responses from a YAML configuration file.
+A FastAPI-based mock LLM server that mimics OpenAI's API format. Instead of calling an actual language model, it uses predefined responses from a YAML configuration file. Made for when you want a deterministic response for testing or development purposes.
+
+I wrote this for the CodeGate project, to mock out certain responses to develop, test and validate certain features. Check it out [here](https://github.com/stacklok/codegate).
 
 ## Features
 
@@ -12,21 +14,6 @@ A FastAPI-based mock LLM server that mimics OpenAI's API format. Instead of call
 - Error handling
 - Mock token counting
 
-## Project Structure
-
-```
-mockllm/
-├── src/
-│   └── mockllm/
-│       ├── __init__.py
-│       ├── config.py      # Response configuration management
-│       ├── models.py      # Pydantic models
-│       └── server.py      # FastAPI server implementation
-├── main.py               # Entry point
-├── requirements.txt      # Project dependencies
-├── responses.yml         # Response configurations
-└── README.md            # Documentation
-```
 
 ## Installation
 
@@ -177,22 +164,8 @@ The server includes comprehensive error handling:
 
 ## Logging
 
-The server uses JSON-formatted logging for better integration with log management systems. Logs include:
+The server uses JSON-formatted logging
 
 - Incoming request details
 - Response configuration loading
 - Error messages and stack traces
-
-## Development
-
-To run the server in development mode with auto-reload:
-```bash
-python main.py
-```
-
-## API Documentation
-
-FastAPI automatically generates API documentation. Once the server is running, visit:
-
-- Swagger UI: `http://localhost:8000/docs`
-- ReDoc: `http://localhost:8000/redoc`
