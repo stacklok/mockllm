@@ -32,7 +32,7 @@ jobs:
 
       - name: Load cached Poetry dependencies
         id: cached-poetry-dependencies
-        uses: actions/cache@v3
+        uses: actions/cache@v4
         with:
           path: .venv
           key: venv-${{ runner.os }}-publish-${{ hashFiles('**/poetry.lock') }}
