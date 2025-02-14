@@ -1,6 +1,6 @@
 # Mock LLM Server
 
-A movi LLM server that mimics OpenAI's API format. Instead of calling an actual language model,
+A mock LLM server that mimics OpenAI's API format. Instead of calling an actual language model,
 it uses predefined responses from a YAML configuration file. 
 
 This is made for when you want a deterministic response for testing or development purposes.
