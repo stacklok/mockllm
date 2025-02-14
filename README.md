@@ -1,6 +1,7 @@
 # Mock LLM Server
 
 A FastAPI-based mock LLM server that mimics OpenAI and Anthropic API formats. Instead of calling actual language models,
+
 it uses predefined responses from a YAML configuration file. 
 
 This is made for when you want a deterministic response for testing or development purposes.
@@ -250,11 +251,3 @@ The server includes comprehensive error handling:
 - Invalid requests return 400 status codes with descriptive messages
 - Server errors return 500 status codes with error details
 - All errors are logged using JSON format
-
-## Logging
-
-The server uses JSON-formatted logging
-
-- Incoming request details
-- Response configuration loading
-- Error messages and stack traces
