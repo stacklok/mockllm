@@ -42,8 +42,8 @@ jobs:
     
     - name: Run tests
       run: |
-        # Verify responses.yml exists
-        test -f tests/responses.yml || (echo "responses.yml not found" && exit 1)
+        # Verify test_responses.yml exists
+        test -f tests/test_responses.yml || (echo "tests/test_responses.yml not found" && exit 1)
         poetry run pytest tests/ -v
 
   lint:
