@@ -11,6 +11,7 @@ log_handler.setFormatter(jsonlogger.JsonFormatter())
 logging.basicConfig(level=logging.INFO, handlers=[log_handler])
 logger = logging.getLogger(__name__)
 
+
 class ResponseConfig:
     """Handles loading and managing response configurations from YAML."""
 
@@ -26,19 +27,20 @@ class ResponseConfig:
         try:
             current_mtime = Path(self.yaml_path).stat().st_mtime
             if current_mtime > self.last_modified:
-                with open(self.yaml_path, 'r') as f:
+                with open(self.yaml_path, "r") as f:
                     data = yaml.safe_load(f)
-                    self.responses = data.get('responses', {})
-                    self.default_response = data.get('defaults', {}).get(
-                        'unknown_response', self.default_response
+                    self.responses = data.get("responses", {})
+                    self.default_response = data.get("defaults", {}).get(
+                        "unknown_response", self.default_response
                     )
                 self.last_modified = current_mtime
-                logger.info(f"Loaded {len(self.responses)} responses from {self.yaml_path}")
+                logger.info(
+                    f"Loaded {len(self.responses)} responses from {self.yaml_path}"
+                )
         except Exception as e:
             logger.error(f"Error loading responses: {str(e)}")
             raise HTTPException(
-                status_code=500,
-                detail="Failed to load response configuration"
+                status_code=500, detail="Failed to load response configuration"
             )
 
     def get_response(self, prompt: str) -> str:
@@ -46,13 +48,15 @@ class ResponseConfig:
         self.load_responses()  # Check for updates
         return self.responses.get(prompt.lower().strip(), self.default_response)
 
-    def get_streaming_response(self, prompt: str, chunk_size: Optional[int] = None) -> str:
+    def get_streaming_response(
+        self, prompt: str, chunk_size: Optional[int] = None
+    ) -> str:
         """Generator that yields response content character by character or in chunks."""
         response = self.get_response(prompt)
         if chunk_size:
             # Yield response in chunks
             for i in range(0, len(response), chunk_size):
-                yield response[i:i + chunk_size]
+                yield response[i : i + chunk_size]
         else:
             # Yield response character by character
             for char in response:

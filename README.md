@@ -1,35 +1,16 @@
 # Mock LLM Server
 
-[![CI](https://github.com/lukehinds/mockllm/actions/workflows/ci.yml/badge.svg)](https://github.com/lukehinds/mockllm/actions/workflows/ci.yml)
+[![CI](https://github.com/stacklok/mockllm/actions/workflows/ci.yml/badge.svg)](https://github.com/stacklok/mockllm/actions/workflows/ci.yml)
 [![PyPI version](https://badge.fury.io/py/mockllm.svg)](https://badge.fury.io/py/mockllm)
-[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
+[![License](https://img.shields.io/badge/License-Apache%202.0-blue.svg)](https://opensource.org/licenses/Apache-2.0)
+
 
 A FastAPI-based mock LLM server that mimics OpenAI and Anthropic API formats. Instead of calling actual language models,
 it uses predefined responses from a YAML configuration file. 
 
 This is made for when you want a deterministic response for testing or development purposes.
 
-Check out the [CodeGate](https://github.com/stacklok/codegate) when you're done here!
-
-## Project Structure
-
-```
-mockllm/
-├── src/
-│   └── mockllm/
-│       ├── __init__.py
-│       ├── config.py      # Response configuration handling
-│       ├── models.py      # Pydantic models for API
-│       └── server.py      # FastAPI server implementation
-├── tests/
-│   └── test_server.py     # Test suite
-├── example.responses.yml   # Example response configuration
-├── LICENSE                # MIT License
-├── MANIFEST.in           # Package manifest
-├── README.md             # This file
-├── pyproject.toml        # Project configuration
-└── requirements.txt      # Dependencies
-```
+Check out the [CodeGate](https://github.com/stacklok/codegate) project when you're done here!
 
 ## Features
 
@@ -53,7 +34,7 @@ pip install mockllm
 
 1. Clone the repository:
 ```bash
-git clone https://github.com/lukehinds/mockllm.git
+git clone https://github.com/stacklok/mockllm.git
 cd mockllm
 ```
 
@@ -168,114 +149,49 @@ defaults:
 
 The server automatically detects changes to `responses.yml` and reloads the configuration without requiring a restart.
 
-## API Format
+## Development
 
-### OpenAI Format
+The project includes a Makefile to help with common development tasks:
 
-#### Request Format
+```bash
+# Set up development environment
+make setup
 
-```json
-{
-  "model": "mock-llm",
-  "messages": [
-    {"role": "user", "content": "what colour is the sky?"}
-  ],
-  "temperature": 0.7,
-  "max_tokens": 150,
-  "stream": false
-}
+# Run all checks (setup, lint, test)
+make all
+
+# Run tests
+make test
+
+# Format code
+make format
+
+# Run all linting and type checking
+make lint
+
+# Clean up build artifacts
+make clean
+
+# See all available commands
+make help
 ```
 
-#### Response Format
+### Development Commands
 
-Regular response:
-```json
-{
-  "id": "mock-123",
-  "object": "chat.completion",
-  "created": 1700000000,
-  "model": "mock-llm",
-  "choices": [
-    {
-      "message": {
-        "role": "assistant",
-        "content": "The sky is blue during a clear day due to a phenomenon called Rayleigh scattering."
-      },
-      "finish_reason": "stop"
-    }
-  ],
-  "usage": {
-    "prompt_tokens": 10,
-    "completion_tokens": 5,
-    "total_tokens": 15
-  }
-}
-```
+- `make setup`: Install all development dependencies
+- `make test`: Run the test suite
+- `make format`: Format code with black and isort
+- `make lint`: Run all code quality checks (format, lint, type)
+- `make build`: Build the package
+- `make clean`: Remove build artifacts and cache files
+- `make install-dev`: Install package with development dependencies
 
-Streaming response (Server-Sent Events format):
-```
-data: {"id":"mock-123","object":"chat.completion.chunk","created":1700000000,"model":"mock-llm","choices":[{"delta":{"role":"assistant"},"index":0}]}
+For more details on available commands, run `make help`.
 
-data: {"id":"mock-124","object":"chat.completion.chunk","created":1700000000,"model":"mock-llm","choices":[{"delta":{"content":"T"},"index":0}]}
+## Contributing
 
-data: {"id":"mock-125","object":"chat.completion.chunk","created":1700000000,"model":"mock-llm","choices":[{"delta":{"content":"h"},"index":0}]}
-
-... (character by character)
-
-data: {"id":"mock-999","object":"chat.completion.chunk","created":1700000000,"model":"mock-llm","choices":[{"delta":{},"index":0,"finish_reason":"stop"}]}
-
-data: [DONE]
-```
-
-### Anthropic Format
-
-#### Request Format
-
-```json
-{
-  "model": "claude-3-sonnet-20240229",
-  "messages": [
-    {"role": "user", "content": "what colour is the sky?"}
-  ],
-  "max_tokens": 1024,
-  "stream": false
-}
-```
-
-#### Response Format
-
-Regular response:
-```json
-{
-  "id": "mock-123",
-  "type": "message",
-  "role": "assistant",
-  "model": "claude-3-sonnet-20240229",
-  "content": [
-    {
-      "type": "text",
-      "text": "The sky is blue during a clear day due to a phenomenon called Rayleigh scattering."
-    }
-  ],
-  "usage": {
-    "input_tokens": 10,
-    "output_tokens": 5,
-    "total_tokens": 15
-  }
-}
-```
-
-Streaming response (Server-Sent Events format):
-```
-data: {"type":"message_delta","id":"mock-123","delta":{"type":"content_block_delta","index":0,"delta":{"text":"T"}}}
-
-data: {"type":"message_delta","id":"mock-123","delta":{"type":"content_block_delta","index":0,"delta":{"text":"h"}}}
-
-... (character by character)
-
-data: [DONE]
-```
-
+Contributions are welcome! Please feel free to submit a Pull Request.
+=======
 ## Development
 
 ### Running Tests
@@ -301,8 +217,6 @@ ruff check .
 
 ## Error Handling
 
-The server includes comprehensive error handling:
-
 - Invalid requests return 400 status codes with descriptive messages
 - Server errors return 500 status codes with error details
 - All errors are logged using JSON format
@@ -319,6 +233,3 @@ The server uses JSON-formatted logging for:
 
 Contributions are welcome! Please feel free to submit a Pull Request.
 
-## License
-
-This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.

@@ -8,10 +8,10 @@ dynamic = ["version"]
 description = "A mock server that mimics OpenAI and Anthropic API formats for testing"
 readme = "README.md"
 requires-python = ">=3.8"
-license = {text = "Apache License (2.0)"}
+license = {text = "Apache-2.0"}
 keywords = ["mock", "llm", "openai", "anthropic", "testing"]
 authors = [
-    {name = "Luke Hinds", email = "lhinds@redhat.com"}
+    {name = "Luke Hinds", email = "luke@stacklok.com"}
 ]
 classifiers = [
     "Development Status :: 4 - Beta",
@@ -77,3 +77,4 @@ line-length = 88
 target-version = "py38"
 select = ["E", "F", "B", "I"]
 ignore = []
+
