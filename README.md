@@ -98,7 +98,7 @@ defaults:
 
 ### Hot Reloading
 
-The server automatically detects changes to `responses.yml` and reloads the configuration without requiring a restart. This makes it easy to add or modify responses while the server is running.
+The server automatically detects changes to `responses.yml` and reloads the configuration without requiring a restart.
 
 ## API Format
 
