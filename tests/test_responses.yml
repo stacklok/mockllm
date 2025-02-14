@@ -1,3 +1,14 @@
+# Default test responses
+default:
+  response: "This is a default test response"
+  
+# Test-specific responses
+test_chat:
+  response: "This is a test chat response"
+  
+test_completion:
+  response: "This is a test completion response"
+
 responses:
   "what colour is the sky?": "The sky is blue during a clear day due to a phenomenon called Rayleigh scattering."
   "who is the president?": "This is a mock response. In a production environment, this would be replaced with accurate, up-to-date information."

@@ -1,6 +1,0 @@
-responses:
-  "test message": "This is a test response"
-  "what colour is the sky?": "The sky is blue during a clear day due to a phenomenon called Rayleigh scattering."
-
-defaults:
-  unknown_response: "This is a default test response"

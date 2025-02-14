@@ -11,6 +11,12 @@ responses:
 """
 
 @pytest.fixture(autouse=True)
+def mock_responses():
+    # Override the default responses path for testing
+    ResponseConfig.DEFAULT_RESPONSES_PATH = "tests/test_responses.yml"
+    return ResponseConfig()
+
+@pytest.fixture(autouse=True)
 def test_response_config(monkeypatch):
     """Use a test-specific responses.yml file."""
     test_dir = Path(__file__).parent
