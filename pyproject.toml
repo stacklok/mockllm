@@ -77,3 +77,4 @@ line-length = 88
 target-version = "py38"
 select = ["E", "F", "B", "I"]
 ignore = []
+

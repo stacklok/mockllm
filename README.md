@@ -4,12 +4,13 @@
 [![PyPI version](https://badge.fury.io/py/mockllm.svg)](https://badge.fury.io/py/mockllm)
 [![License](https://img.shields.io/badge/License-Apache%202.0-blue.svg)](https://opensource.org/licenses/Apache-2.0)
 
+
 A FastAPI-based mock LLM server that mimics OpenAI and Anthropic API formats. Instead of calling actual language models,
 it uses predefined responses from a YAML configuration file. 
 
 This is made for when you want a deterministic response for testing or development purposes.
 
-Check out the [CodeGate](https://github.com/stacklok/codegate) when you're done here!
+Check out the [CodeGate](https://github.com/stacklok/codegate) project when you're done here!
 
 ## Features
 
@@ -190,7 +191,45 @@ For more details on available commands, run `make help`.
 ## Contributing
 
 Contributions are welcome! Please feel free to submit a Pull Request.
+=======
+## Development
 
-## License
+### Running Tests
 
-This project is licensed under the Apache License, Version 2.0 - see the [LICENSE](LICENSE) file for details.
+```bash
+pip install -e ".[dev]"  # Install development dependencies
+pytest tests/
+```
+
+### Code Quality
+
+```bash
+# Format code
+black .
+isort .
+
+# Type checking
+mypy src/
+
+# Linting
+ruff check .
+```
+
+## Error Handling
+
+- Invalid requests return 400 status codes with descriptive messages
+- Server errors return 500 status codes with error details
+- All errors are logged using JSON format
+
+## Logging
+
+The server uses JSON-formatted logging for:
+
+- Incoming request details
+- Response configuration loading
+- Error messages and stack traces
+
+## Contributing
+
+Contributions are welcome! Please feel free to submit a Pull Request.
+
