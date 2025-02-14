@@ -40,3 +40,6 @@ ENV/
 .env.local
 .env.*.local
 responses.yml
+
+# setuptools
+src/mockllm/_version.py

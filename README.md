@@ -4,7 +4,6 @@
 [![PyPI version](https://badge.fury.io/py/mockllm.svg)](https://badge.fury.io/py/mockllm)
 [![License](https://img.shields.io/badge/License-Apache%202.0-blue.svg)](https://opensource.org/licenses/Apache-2.0)
 
-
 A FastAPI-based mock LLM server that mimics OpenAI and Anthropic API formats. Instead of calling actual language models,
 it uses predefined responses from a YAML configuration file. 
 
@@ -38,17 +37,16 @@ git clone https://github.com/stacklok/mockllm.git
 cd mockllm
 ```
 
-2. Create a virtual environment and activate it:
+2. Install Poetry (if not already installed):
 ```bash
-python -m venv venv
-source venv/bin/activate  # On Windows, use: venv\Scripts\activate
+curl -sSL https://install.python-poetry.org | python3 -
 ```
 
 3. Install dependencies:
 ```bash
-pip install -e ".[dev]"  # Install with development dependencies
+poetry install  # Install with all dependencies
 # or
-pip install -e .         # Install without development dependencies
+poetry install --without dev  # Install without development dependencies
 ```
 
 ## Usage
@@ -61,11 +59,11 @@ cp example.responses.yml responses.yml
 
 2. Start the server:
 ```bash
-python -m mockllm
+poetry run python -m mockllm
 ```
 Or using uvicorn directly:
 ```bash
-uvicorn mockllm.server:app --reload
+poetry run uvicorn mockllm.server:app --reload
 ```
 
 The server will start on `http://localhost:8000`
@@ -151,7 +149,7 @@ The server automatically detects changes to `responses.yml` and reloads the conf
 
 ## Development
 
-The project includes a Makefile to help with common development tasks:
+The project uses Poetry for dependency management and includes a Makefile to help with common development tasks:
 
 ```bash
 # Set up development environment
@@ -178,44 +176,19 @@ make help
 
 ### Development Commands
 
-- `make setup`: Install all development dependencies
+- `make setup`: Install all development dependencies with Poetry
 - `make test`: Run the test suite
 - `make format`: Format code with black and isort
 - `make lint`: Run all code quality checks (format, lint, type)
-- `make build`: Build the package
+- `make build`: Build the package with Poetry
 - `make clean`: Remove build artifacts and cache files
 - `make install-dev`: Install package with development dependencies
 
 For more details on available commands, run `make help`.
 
-## Contributing
-
-Contributions are welcome! Please feel free to submit a Pull Request.
-=======
-## Development
-
-### Running Tests
-
-```bash
-pip install -e ".[dev]"  # Install development dependencies
-pytest tests/
-```
-
-### Code Quality
-
-```bash
-# Format code
-black .
-isort .
-
-# Type checking
-mypy src/
-
-# Linting
-ruff check .
-```
-
 ## Error Handling
+
+The server includes comprehensive error handling:
 
 - Invalid requests return 400 status codes with descriptive messages
 - Server errors return 500 status codes with error details
@@ -233,3 +206,6 @@ The server uses JSON-formatted logging for:
 
 Contributions are welcome! Please feel free to submit a Pull Request.
 
+## License
+
+This project is licensed under the Apache License, Version 2.0 - see the [LICENSE](LICENSE) file for details.

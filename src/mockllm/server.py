@@ -71,7 +71,8 @@ async def anthropic_stream_response(
 async def openai_chat_completion(
     request: OpenAIChatRequest,
 ) -> Union[OpenAIChatResponse, StreamingResponse]:
-    """Handle chat completion requests, supporting both regular and streaming responses."""
+    """Handle chat completion requests, supporting
+    both regular and streaming responses."""
     try:
         logger.info(
             "Received chat completion request",
@@ -122,14 +123,17 @@ async def openai_chat_completion(
 
     except Exception as e:
         logger.error(f"Error processing request: {str(e)}")
-        raise HTTPException(status_code=500, detail=f"Internal server error: {str(e)}")
+        raise HTTPException(
+            status_code=500, detail=f"Internal server error: {str(e)}"
+        ) from e
 
 
 @app.post("/v1/messages", response_model=None)
 async def anthropic_chat_completion(
     request: AnthropicChatRequest,
 ) -> Union[AnthropicChatResponse, StreamingResponse]:
-    """Handle Anthropic chat completion requests, supporting both regular and streaming responses."""
+    """Handle Anthropic chat completion requests,
+    supporting both regular and streaming responses."""
     try:
         logger.info(
             "Received Anthropic chat completion request",
@@ -174,4 +178,6 @@ async def anthropic_chat_completion(
 
     except Exception as e:
         logger.error(f"Error processing request: {str(e)}")
-        raise HTTPException(status_code=500, detail=f"Internal server error: {str(e)}")
+        raise HTTPException(
+            status_code=500, detail=f"Internal server error: {str(e)}"
+        ) from e

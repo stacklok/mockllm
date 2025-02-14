@@ -1,17 +1,15 @@
-[build-system]
-requires = ["setuptools>=45", "wheel", "setuptools_scm>=6.2"]
-build-backend = "setuptools.build_meta"
-
-[project]
+[tool.poetry]
 name = "mockllm"
-dynamic = ["version"]
+version = "0.1.0"
 description = "A mock server that mimics OpenAI and Anthropic API formats for testing"
+authors = ["Luke Hinds <luke@stacklok.com>"]
+license = "Apache-2.0"
 readme = "README.md"
-requires-python = ">=3.8"
-license = {text = "Apache-2.0"}
+repository = "https://github.com/stacklok/mockllm"
+homepage = "https://github.com/stacklok/mockllm"
 keywords = ["mock", "llm", "openai", "anthropic", "testing"]
-authors = [
-    {name = "Luke Hinds", email = "luke@stacklok.com"}
+packages = [
+    { include = "mockllm", from = "src" }
 ]
 classifiers = [
     "Development Status :: 4 - Beta",
@@ -24,36 +22,30 @@ classifiers = [
     "Programming Language :: Python :: 3.11",
     "Topic :: Software Development :: Testing",
 ]
-dependencies = [
-    "fastapi>=0.68.0",
-    "uvicorn>=0.15.0",
-    "pydantic>=2.0.0",
-    "python-json-logger>=2.0.0",
-    "pyyaml>=5.4.1",
-    "watchdog>=2.1.0",
-]
 
-[project.optional-dependencies]
-dev = [
-    "pytest>=6.0",
-    "pytest-asyncio>=0.15.0",
-    "black>=21.0",
-    "isort>=5.0",
-    "mypy>=0.900",
-    "ruff>=0.1.0",
-]
+[tool.poetry.dependencies]
+python = ">=3.8"
+fastapi = ">=0.68.0"
+uvicorn = ">=0.15.0"
+pydantic = ">=2.0.0"
+python-json-logger = ">=2.0.0"
+pyyaml = ">=5.4.1"
+watchdog = ">=2.1.0"
+httpx = "^0.28.1"
 
-[project.urls]
-Homepage = "https://github.com/stacklok/mockllm"
-Repository = "https://github.com/stacklok/mockllm.git"
-Issues = "https://github.com/stacklok/mockllm/issues"
+[tool.poetry.group.dev.dependencies]
+pytest = ">=6.0"
+pytest-asyncio = ">=0.15.0"
+pytest-mock = ">=3.10.0"
+black = ">=21.0"
+isort = ">=5.0"
+mypy = ">=0.900"
+ruff = ">=0.1.0"
+types-PyYAML = ">=6.0"
 
-[tool.setuptools]
-packages = ["mockllm"]
-package-dir = {"" = "src"}
-
-[tool.setuptools_scm]
-write_to = "src/mockllm/_version.py"
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"
 
 [tool.black]
 line-length = 88
@@ -75,6 +67,5 @@ check_untyped_defs = true
 [tool.ruff]
 line-length = 88
 target-version = "py38"
-select = ["E", "F", "B", "I"]
-ignore = []
-
+lint.select = ["E", "F", "B", "I"]
+lint.ignore = []
