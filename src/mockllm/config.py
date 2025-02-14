@@ -1,6 +1,6 @@
 import logging
 from pathlib import Path
-from typing import Dict, Optional
+from typing import Dict, Generator, Optional
 
 import yaml
 from fastapi import HTTPException
@@ -33,7 +33,7 @@ class ResponseConfig:
                     self.default_response = data.get("defaults", {}).get(
                         "unknown_response", self.default_response
                     )
-                self.last_modified = current_mtime
+                self.last_modified = int(current_mtime)
                 logger.info(
                     f"Loaded {len(self.responses)} responses from {self.yaml_path}"
                 )
@@ -41,7 +41,7 @@ class ResponseConfig:
             logger.error(f"Error loading responses: {str(e)}")
             raise HTTPException(
                 status_code=500, detail="Failed to load response configuration"
-            )
+            ) from e
 
     def get_response(self, prompt: str) -> str:
         """Get response for a given prompt."""
@@ -50,8 +50,9 @@ class ResponseConfig:
 
     def get_streaming_response(
         self, prompt: str, chunk_size: Optional[int] = None
-    ) -> str:
-        """Generator that yields response content character by character or in chunks."""
+    ) -> Generator[str, None, None]:
+        """Generator that yields response content
+        character by character or in chunks."""
         response = self.get_response(prompt)
         if chunk_size:
             # Yield response in chunks

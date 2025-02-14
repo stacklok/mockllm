@@ -75,6 +75,6 @@ check_untyped_defs = true
 [tool.ruff]
 line-length = 88
 target-version = "py38"
-select = ["E", "F", "B", "I"]
-ignore = []
+lint.select = ["E", "F", "B", "I"]
+lint.ignore = []
 
