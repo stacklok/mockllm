@@ -6,8 +6,10 @@ from fastapi.responses import StreamingResponse
 from pythonjsonlogger import jsonlogger
 
 from .config import ResponseConfig
-from .models import (ChatRequest, ChatResponse, DeltaMessage,
-                    StreamChoice, StreamResponse)
+from .models import (OpenAIChatRequest, OpenAIChatResponse, OpenAIDeltaMessage,
+                    OpenAIStreamChoice, OpenAIStreamResponse,
+                    AnthropicChatRequest, AnthropicChatResponse,
+                    AnthropicStreamResponse, AnthropicStreamDelta)
 
 log_handler = logging.StreamHandler()
 log_handler.setFormatter(jsonlogger.JsonFormatter())
@@ -18,14 +20,14 @@ app = FastAPI(title="Mock LLM Server")
 
 response_config = ResponseConfig()
 
-async def stream_response(content: str, model: str) -> AsyncGenerator[str, None]:
-    """Generate streaming response in SSE format."""
+async def openai_stream_response(content: str, model: str) -> AsyncGenerator[str, None]:
+    """Generate OpenAI-style streaming response in SSE format."""
     # Send the first message with role
-    first_chunk = StreamResponse(
+    first_chunk = OpenAIStreamResponse(
         model=model,
         choices=[
-            StreamChoice(
-                delta=DeltaMessage(role="assistant")
+            OpenAIStreamChoice(
+                delta=OpenAIDeltaMessage(role="assistant")
             )
         ]
     )
@@ -33,22 +35,22 @@ async def stream_response(content: str, model: str) -> AsyncGenerator[str, None]
 
     # Stream the content character by character
     for chunk in response_config.get_streaming_response(content):
-        chunk_response = StreamResponse(
+        chunk_response = OpenAIStreamResponse(
             model=model,
             choices=[
-                StreamChoice(
-                    delta=DeltaMessage(content=chunk)
+                OpenAIStreamChoice(
+                    delta=OpenAIDeltaMessage(content=chunk)
                 )
             ]
         )
         yield f"data: {chunk_response.model_dump_json()}\n\n"
 
     # Send the final message
-    final_chunk = StreamResponse(
+    final_chunk = OpenAIStreamResponse(
         model=model,
         choices=[
-            StreamChoice(
-                delta=DeltaMessage(),
+            OpenAIStreamChoice(
+                delta=OpenAIDeltaMessage(),
                 finish_reason="stop"
             )
         ]
@@ -56,8 +58,20 @@ async def stream_response(content: str, model: str) -> AsyncGenerator[str, None]
     yield f"data: {final_chunk.model_dump_json()}\n\n"
     yield "data: [DONE]\n\n"
 
+async def anthropic_stream_response(content: str, model: str) -> AsyncGenerator[str, None]:
+    """Generate Anthropic-style streaming response in SSE format."""
+    for chunk in response_config.get_streaming_response(content):
+        stream_response = AnthropicStreamResponse(
+            delta=AnthropicStreamDelta(
+                delta={"text": chunk}
+            )
+        )
+        yield f"data: {stream_response.model_dump_json()}\n\n"
+    
+    yield "data: [DONE]\n\n"
+
 @app.post("/v1/chat/completions", response_model=None)
-async def chat_completion(request: ChatRequest) -> Union[ChatResponse, StreamingResponse]:
+async def openai_chat_completion(request: OpenAIChatRequest) -> Union[OpenAIChatResponse, StreamingResponse]:
     """Handle chat completion requests, supporting both regular and streaming responses."""
     try:
         logger.info("Received chat completion request", extra={
@@ -79,7 +93,7 @@ async def chat_completion(request: ChatRequest) -> Union[ChatResponse, Streaming
 
         if request.stream:
             return StreamingResponse(
-                stream_response(last_message.content, request.model),
+                openai_stream_response(last_message.content, request.model),
                 media_type="text/event-stream"
             )
 
@@ -90,7 +104,7 @@ async def chat_completion(request: ChatRequest) -> Union[ChatResponse, Streaming
         completion_tokens = len(response_content.split())
         total_tokens = prompt_tokens + completion_tokens
 
-        return ChatResponse(
+        return OpenAIChatResponse(
             model=request.model,
             choices=[{
                 "index": 0,
@@ -103,6 +117,57 @@ async def chat_completion(request: ChatRequest) -> Union[ChatResponse, Streaming
             usage={
                 "prompt_tokens": prompt_tokens,
                 "completion_tokens": completion_tokens,
+                "total_tokens": total_tokens
+            }
+        )
+
+    except Exception as e:
+        logger.error(f"Error processing request: {str(e)}")
+        raise HTTPException(
+            status_code=500,
+            detail=f"Internal server error: {str(e)}"
+        )
+
+@app.post("/v1/messages", response_model=None)
+async def anthropic_chat_completion(request: AnthropicChatRequest) -> Union[AnthropicChatResponse, StreamingResponse]:
+    """Handle Anthropic chat completion requests, supporting both regular and streaming responses."""
+    try:
+        logger.info("Received Anthropic chat completion request", extra={
+            "model": request.model,
+            "message_count": len(request.messages),
+            "stream": request.stream
+        })
+
+        last_message = next(
+            (msg for msg in reversed(request.messages) if msg.role == "user"),
+            None
+        )
+
+        if not last_message:
+            raise HTTPException(
+                status_code=400,
+                detail="No user message found in request"
+            )
+
+        if request.stream:
+            return StreamingResponse(
+                anthropic_stream_response(last_message.content, request.model),
+                media_type="text/event-stream"
+            )
+
+        response_content = response_config.get_response(last_message.content)
+
+        # Calculate mock token counts
+        prompt_tokens = len(str(request.messages).split())
+        completion_tokens = len(response_content.split())
+        total_tokens = prompt_tokens + completion_tokens
+
+        return AnthropicChatResponse(
+            model=request.model,
+            content=[{"type": "text", "text": response_content}],
+            usage={
+                "input_tokens": prompt_tokens,
+                "output_tokens": completion_tokens,
                 "total_tokens": total_tokens
             }
         )
