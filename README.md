@@ -22,7 +22,7 @@ Check out the [CodeGate](https://github.com/stacklok/codegate) when you're done 
 
 1. Clone the repository:
 ```bash
-git clone https://github.com/yourusername/mockllm.git
+git clone https://github.com/lukehinds/mockllm.git
 cd mockllm
 ```
 
