@@ -1,35 +1,27 @@
 from unittest.mock import mock_open, patch
-
 import pytest
+from fastapi.testclient import TestClient
 
-from mockllm.server import app
-
+# Move MOCK_YAML_CONTENT definition to top
 MOCK_YAML_CONTENT = """
 responses:
   default: "Hello, this is a mock response."
 """
 
-# Mock open() and os.path.exists() before importing anything from mockllm
+# Create a patch for ResponseConfig before importing server
 with patch("builtins.open", mock_open(read_data=MOCK_YAML_CONTENT)), patch(
     "os.path.exists", return_value=True
-):
-    from fastapi.testclient import TestClient
-
+), patch("mockllm.config.ResponseConfig.load_responses"):
+    from mockllm.server import app
 
 client = TestClient(app)
 
-# Mock the content of responses.yml (adjust as needed)
-MOCK_YAML_CONTENT = """
-responses:
-  default: "Hello, this is a mock response."
-"""
-
-
 @pytest.fixture(autouse=True)
 def mock_responses_file():
+    # Update the fixture to also patch ResponseConfig.load_responses
     with patch("builtins.open", mock_open(read_data=MOCK_YAML_CONTENT)), patch(
         "os.path.exists", return_value=True
-    ):
+    ), patch("mockllm.config.ResponseConfig.load_responses"):
         yield
 
 
