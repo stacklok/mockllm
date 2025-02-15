@@ -29,16 +29,7 @@ jobs:
         virtualenvs-create: true
         virtualenvs-in-project: true
 
-    - name: Load cached Poetry dependencies
-      id: cached-poetry-dependencies
-      uses: actions/cache@v4
-      with:
-        path: .venv
-        key: venv-${{ runner.os }}-${{ matrix.python-version }}-${{ hashFiles('**/poetry.lock') }}
-        fail-on-cache-miss: true  # Add this line for debugging
-
     - name: Install dependencies
-      if: steps.cached-poetry-dependencies.outputs.cache-hit != 'true'
       run: poetry install --with dev
 
     - name: Run tests
@@ -64,16 +55,7 @@ jobs:
         virtualenvs-create: true
         virtualenvs-in-project: true
 
-    - name: Load cached Poetry dependencies
-      id: cached-poetry-dependencies
-      uses: actions/cache@v4
-      with:
-        path: .venv
-        key: venv-${{ runner.os }}-lint-${{ hashFiles('**/poetry.lock') }}
-        fail-on-cache-miss: true  # Add this line for debugging
-
     - name: Install dependencies
-      if: steps.cached-poetry-dependencies.outputs.cache-hit != 'true'
       run: poetry install --with dev
 
     - name: Check formatting
