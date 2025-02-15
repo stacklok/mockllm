@@ -10,8 +10,9 @@ responses:
 """
 
 # Mock open() and os.path.exists() before importing anything from mockllm
-with patch("builtins.open", mock_open(read_data=MOCK_YAML_CONTENT)), \
-     patch("os.path.exists", return_value=True):
+with patch("builtins.open", mock_open(read_data=MOCK_YAML_CONTENT)), patch(
+    "os.path.exists", return_value=True
+):
     from fastapi.testclient import TestClient
 
 
@@ -23,11 +24,14 @@ responses:
   default: "Hello, this is a mock response."
 """
 
+
 @pytest.fixture(autouse=True)
 def mock_responses_file():
-    with patch("builtins.open", mock_open(read_data=MOCK_YAML_CONTENT)), \
-         patch("os.path.exists", return_value=True):
+    with patch("builtins.open", mock_open(read_data=MOCK_YAML_CONTENT)), patch(
+        "os.path.exists", return_value=True
+    ):
         yield
+
 
 def test_openai_chat_completion():
     response = client.post(
@@ -44,6 +48,7 @@ def test_openai_chat_completion():
     assert "message" in data["choices"][0]
     assert "usage" in data
 
+
 def test_anthropic_chat_completion():
     response = client.post(
         "/v1/messages",
@@ -59,6 +64,7 @@ def test_anthropic_chat_completion():
     assert len(data["content"]) > 0
     assert "usage" in data
 
+
 def test_openai_streaming():
     response = client.post(
         "/v1/chat/completions",
@@ -71,6 +77,7 @@ def test_openai_streaming():
     assert response.status_code == 200
     assert response.headers["content-type"].startswith("text/event-stream")
 
+
 def test_anthropic_streaming():
     response = client.post(
         "/v1/messages",
@@ -82,6 +89,7 @@ def test_anthropic_streaming():
     )
     assert response.status_code == 200
     assert response.headers["content-type"] == "text/event-stream; charset=utf-8"
+
 
 def test_invalid_request():
     response = client.post(
