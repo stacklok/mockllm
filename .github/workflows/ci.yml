@@ -16,7 +16,7 @@ jobs:
 
     steps:
     - uses: actions/checkout@v4
-    
+
     - name: Set up Python ${{ matrix.python-version }}
       uses: actions/setup-python@v4
       with:
@@ -39,7 +39,7 @@ jobs:
     - name: Install dependencies
       if: steps.cached-poetry-dependencies.outputs.cache-hit != 'true'
       run: poetry install --with dev
-    
+
     - name: Run tests
       run: |
         # Verify test_responses.yml exists
@@ -50,7 +50,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
     - uses: actions/checkout@v4
-    
+
     - name: Set up Python
       uses: actions/setup-python@v4
       with:
@@ -73,14 +73,14 @@ jobs:
     - name: Install dependencies
       if: steps.cached-poetry-dependencies.outputs.cache-hit != 'true'
       run: poetry install --with dev
-    
+
     - name: Check formatting
       run: |
         poetry run black --check .
         poetry run isort --check .
-    
+
     - name: Type checking
       run: poetry run mypy src/
-    
+
     - name: Lint
       run: poetry run ruff check .
