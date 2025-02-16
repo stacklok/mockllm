@@ -1,7 +1,6 @@
 from abc import ABC, abstractmethod
 from typing import Any, AsyncGenerator, Dict, Union
 
-from fastapi import Response
 from fastapi.responses import StreamingResponse
 
 
