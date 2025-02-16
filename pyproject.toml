@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "mockllm"
-version = "0.0.5"
+version = "0.0.6"
 description = "A mock server that mimics OpenAI and Anthropic API formats for testing"
 authors = ["Luke Hinds <luke@stacklok.com>"]
 license = "Apache-2.0"
