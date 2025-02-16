@@ -22,7 +22,7 @@ def mock_responses():
 def test_response_config(monkeypatch):
     """Use a test-specific responses.yml file."""
     test_dir = Path(__file__).parent
-    test_responses_path = test_dir / "responses.yml"
+    test_responses_path = test_dir / "tests/responses.yml"
 
     # Ensure the test responses.yml file exists
     if not test_responses_path.exists():

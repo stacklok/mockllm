@@ -16,6 +16,7 @@ with patch("builtins.open", mock_open(read_data=MOCK_YAML_CONTENT)), patch(
 
 client = TestClient(app)
 
+
 @pytest.fixture(autouse=True)
 def mock_responses_file():
     # Update the fixture to also patch ResponseConfig.load_responses
