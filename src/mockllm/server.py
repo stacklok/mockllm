@@ -30,15 +30,14 @@ response_config = ResponseConfig()
 
 async def openai_stream_response(content: str, model: str) -> AsyncGenerator[str, None]:
     """Generate OpenAI-style streaming response in SSE format."""
-    # Send the first message with role
     first_chunk = OpenAIStreamResponse(
         model=model,
         choices=[OpenAIStreamChoice(delta=OpenAIDeltaMessage(role="assistant"))],
     )
     yield f"data: {first_chunk.model_dump_json()}\n\n"
 
-    # Stream the content character by character
-    for chunk in response_config.get_streaming_response(content):
+    # Stream the content character by character with lag
+    async for chunk in response_config.get_streaming_response_with_lag(content):
         chunk_response = OpenAIStreamResponse(
             model=model,
             choices=[OpenAIStreamChoice(delta=OpenAIDeltaMessage(content=chunk))],
@@ -58,7 +57,7 @@ async def anthropic_stream_response(
     content: str, model: str
 ) -> AsyncGenerator[str, None]:
     """Generate Anthropic-style streaming response in SSE format."""
-    for chunk in response_config.get_streaming_response(content):
+    async for chunk in response_config.get_streaming_response_with_lag(content):
         stream_response = AnthropicStreamResponse(
             delta=AnthropicStreamDelta(delta={"text": chunk})
         )
@@ -98,7 +97,9 @@ async def openai_chat_completion(
                 media_type="text/event-stream",
             )
 
-        response_content = response_config.get_response(last_message.content)
+        response_content = await response_config.get_response_with_lag(
+            last_message.content
+        )
 
         # Calculate mock token counts
         prompt_tokens = len(str(request.messages).split())
@@ -159,7 +160,9 @@ async def anthropic_chat_completion(
                 media_type="text/event-stream",
             )
 
-        response_content = response_config.get_response(last_message.content)
+        response_content = await response_config.get_response_with_lag(
+            last_message.content
+        )
 
         # Calculate mock token counts
         prompt_tokens = len(str(request.messages).split())
