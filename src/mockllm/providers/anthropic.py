@@ -1,25 +1,29 @@
-from typing import AsyncGenerator, Union
-from fastapi import HTTPException
+from typing import Any, AsyncGenerator, Dict, Union
+
+from fastapi import HTTPException, Response
 from fastapi.responses import StreamingResponse
 
 from ..config import ResponseConfig
 from ..models import (
     AnthropicChatRequest,
     AnthropicChatResponse,
-    AnthropicStreamResponse,
     AnthropicStreamDelta,
+    AnthropicStreamResponse,
 )
-from .base import LLMProvider
 from ..utils import count_tokens
+from .base import LLMProvider
+
 
 class AnthropicProvider(LLMProvider):
     def __init__(self, response_config: ResponseConfig):
         self.response_config = response_config
 
-    async def generate_stream_response(
+    def generate_stream_response(
         self, content: str, model: str
     ) -> AsyncGenerator[str, None]:
-        async for chunk in self.response_config.get_streaming_response_with_lag(content):
+        async for chunk in self.response_config.get_streaming_response_with_lag(
+            content
+        ):
             stream_response = AnthropicStreamResponse(
                 delta=AnthropicStreamDelta(delta={"text": chunk})
             )
@@ -29,13 +33,15 @@ class AnthropicProvider(LLMProvider):
 
     async def handle_chat_completion(
         self, request: AnthropicChatRequest
-    ) -> Union[AnthropicChatResponse, StreamingResponse]:
+    ) -> Union[Response, Dict[Any, Any]]:
         last_message = next(
             (msg for msg in reversed(request.messages) if msg.role == "user"), None
         )
 
         if not last_message:
-            raise HTTPException(status_code=400, detail="No user message found in request")
+            raise HTTPException(
+                status_code=400, detail="No user message found in request"
+            )
 
         if request.stream:
             return StreamingResponse(
@@ -59,4 +65,4 @@ class AnthropicProvider(LLMProvider):
                 "output_tokens": completion_tokens,
                 "total_tokens": total_tokens,
             },
-        ) 
+        ).model_dump()

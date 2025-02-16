@@ -1,23 +1,25 @@
-from typing import AsyncGenerator, Union
-from fastapi import HTTPException
+from typing import Any, AsyncGenerator, Dict, Union
+
+from fastapi import HTTPException, Response
 from fastapi.responses import StreamingResponse
 
 from ..config import ResponseConfig
 from ..models import (
     OpenAIChatRequest,
     OpenAIChatResponse,
-    OpenAIStreamResponse,
-    OpenAIStreamChoice,
     OpenAIDeltaMessage,
+    OpenAIStreamChoice,
+    OpenAIStreamResponse,
 )
-from .base import LLMProvider
 from ..utils import count_tokens
+from .base import LLMProvider
+
 
 class OpenAIProvider(LLMProvider):
     def __init__(self, response_config: ResponseConfig):
         self.response_config = response_config
 
-    async def generate_stream_response(
+    def generate_stream_response(
         self, content: str, model: str
     ) -> AsyncGenerator[str, None]:
         first_chunk = OpenAIStreamResponse(
@@ -26,7 +28,9 @@ class OpenAIProvider(LLMProvider):
         )
         yield f"data: {first_chunk.model_dump_json()}\n\n"
 
-        async for chunk in self.response_config.get_streaming_response_with_lag(content):
+        for chunk in self.response_config.get_streaming_response_with_lag(
+            content
+        ):
             chunk_response = OpenAIStreamResponse(
                 model=model,
                 choices=[OpenAIStreamChoice(delta=OpenAIDeltaMessage(content=chunk))],
@@ -35,20 +39,24 @@ class OpenAIProvider(LLMProvider):
 
         final_chunk = OpenAIStreamResponse(
             model=model,
-            choices=[OpenAIStreamChoice(delta=OpenAIDeltaMessage(), finish_reason="stop")],
+            choices=[
+                OpenAIStreamChoice(delta=OpenAIDeltaMessage(), finish_reason="stop")
+            ],
         )
         yield f"data: {final_chunk.model_dump_json()}\n\n"
         yield "data: [DONE]\n\n"
 
     async def handle_chat_completion(
         self, request: OpenAIChatRequest
-    ) -> Union[OpenAIChatResponse, StreamingResponse]:
+    ) -> Union[Response, Dict[Any, Any]]:
         last_message = next(
             (msg for msg in reversed(request.messages) if msg.role == "user"), None
         )
 
         if not last_message:
-            raise HTTPException(status_code=400, detail="No user message found in request")
+            raise HTTPException(
+                status_code=400, detail="No user message found in request"
+            )
 
         if request.stream:
             return StreamingResponse(
@@ -78,4 +86,4 @@ class OpenAIProvider(LLMProvider):
                 "completion_tokens": completion_tokens,
                 "total_tokens": total_tokens,
             },
-        ) 
+        ).model_dump()

@@ -1,8 +1,9 @@
 import logging
-from typing import AsyncGenerator
+from typing import Any, AsyncGenerator, Dict, Union
 
 import tiktoken
 from fastapi import FastAPI, HTTPException
+from fastapi.responses import StreamingResponse
 from pythonjsonlogger import jsonlogger
 
 from .config import ResponseConfig
@@ -79,7 +80,9 @@ async def anthropic_stream_response(
 
 
 @app.post("/v1/chat/completions")
-async def openai_chat_completion(request: OpenAIChatRequest):
+async def openai_chat_completion(
+    request: OpenAIChatRequest,
+) -> Union[Dict[str, Any], StreamingResponse]:
     """Handle OpenAI chat completion requests"""
     try:
         logger.info(
@@ -99,7 +102,9 @@ async def openai_chat_completion(request: OpenAIChatRequest):
 
 
 @app.post("/v1/messages")
-async def anthropic_chat_completion(request: AnthropicChatRequest):
+async def anthropic_chat_completion(
+    request: AnthropicChatRequest,
+) -> Union[Dict[str, Any], StreamingResponse]:
     """Handle Anthropic chat completion requests"""
     try:
         logger.info(

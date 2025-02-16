@@ -1,5 +1,6 @@
 import tiktoken
 
+
 def count_tokens(text: str, model: str) -> int:
     """Get realistic token count for text using tiktoken"""
     try:
@@ -7,4 +8,4 @@ def count_tokens(text: str, model: str) -> int:
         return len(encoding.encode(text))
     except Exception:
         # Fallback to rough estimation if model not supported
-        return len(text.split()) 
+        return len(text.split())
