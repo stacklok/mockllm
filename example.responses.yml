@@ -6,3 +6,7 @@ responses:
 
 defaults:
   unknown_response: "I don't know the answer to that. This is a mock response."
+
+settings:
+  lag_enabled: true
+  lag_factor: 10  # Higher values = faster responses (10 = fast, 1 = slow)
