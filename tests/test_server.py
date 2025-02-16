@@ -1,8 +1,30 @@
+from unittest.mock import mock_open, patch
+
+import pytest
 from fastapi.testclient import TestClient
 
-from mockllm.server import app
+# Move MOCK_YAML_CONTENT definition to top
+MOCK_YAML_CONTENT = """
+responses:
+  default: "Hello, this is a mock response."
+"""
+
+# Create a patch for ResponseConfig before importing server
+with patch("builtins.open", mock_open(read_data=MOCK_YAML_CONTENT)), patch(
+    "os.path.exists", return_value=True
+), patch("mockllm.config.ResponseConfig.load_responses"):
+    from mockllm.server import app
 
 client = TestClient(app)
+
+
+@pytest.fixture(autouse=True)
+def mock_responses_file():
+    # Update the fixture to also patch ResponseConfig.load_responses
+    with patch("builtins.open", mock_open(read_data=MOCK_YAML_CONTENT)), patch(
+        "os.path.exists", return_value=True
+    ), patch("mockllm.config.ResponseConfig.load_responses"):
+        yield
 
 
 def test_openai_chat_completion():
