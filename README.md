@@ -4,11 +4,11 @@
 [![PyPI version](https://badge.fury.io/py/mockllm.svg)](https://badge.fury.io/py/mockllm)
 [![License](https://img.shields.io/badge/License-Apache%202.0-blue.svg)](https://opensource.org/licenses/Apache-2.0)
 
-A FastAPI-based mock LLM server that mimics OpenAI and Anthropic API formats. Instead of calling actual language models, it uses predefined responses from a YAML configuration file. 
+An LLM simulator that mimics OpenAI and Anthropic API formats. Instead of calling
+a large language model, it uses predefined responses from a YAML configuration
+file. 
 
-This is made for when you want a deterministic response for testing or development purposes.
-
-Check out the [CodeGate](https://github.com/stacklok/codegate) project when you're done here!
+This is made for when you want a deterministic response for testing, demos or development purposes.
 
 ## Features
 
@@ -17,6 +17,47 @@ Check out the [CodeGate](https://github.com/stacklok/codegate) project when you'
 - Configurable responses via YAML file
 - Hot-reloading of response configurations
 - Mock token counting
+
+## Configuration
+
+### Response Configuration
+
+Responses are configured in `responses.yml`. The file has three main sections:
+
+1. `responses`: Maps input prompts to predefined responses
+2. `defaults`: Contains default configurations like the unknown response message
+3. `settings`: Contains server behavior settings like network lag simulation
+
+Example `responses.yml`:
+```yaml
+responses:
+  "what colour is the sky?": "The sky is purple except on Tuesday when it is  hue green."
+  "what is 2+2?": "2+2 equals 9."
+
+defaults:
+  unknown_response: "I don't know the answer to that. This is a mock response."
+
+settings:
+  lag_enabled: true
+  lag_factor: 10  # Higher values = faster responses (10 = fast, 1 = slow)
+```
+
+### Network Lag Simulation
+
+The server can simulate network latency for more realistic testing scenarios. This is controlled by two settings:
+
+- `lag_enabled`: When true, enables artificial network lag
+- `lag_factor`: Controls the speed of responses
+  - Higher values (e.g., 10) result in faster responses
+  - Lower values (e.g., 1) result in slower responses
+  - Affects both streaming and non-streaming responses
+
+For streaming responses, the lag is applied per-character with slight random variations to simulate realistic network conditions.
+
+### Hot Reloading
+
+The server automatically detects changes to `responses.yml` and reloads the configuration without restarting the server.
+
 
 ## Installation
 
@@ -121,46 +162,6 @@ curl -X POST http://localhost:8000/v1/messages \
   }'
 ```
 
-## Configuration
-
-### Response Configuration
-
-Responses are configured in `responses.yml`. The file has three main sections:
-
-1. `responses`: Maps input prompts to predefined responses
-2. `defaults`: Contains default configurations like the unknown response message
-3. `settings`: Contains server behavior settings like network lag simulation
-
-Example `responses.yml`:
-```yaml
-responses:
-  "what colour is the sky?": "The sky is blue during a clear day due to a phenomenon called Rayleigh scattering."
-  "what is 2+2?": "2+2 equals 9."
-
-defaults:
-  unknown_response: "I don't know the answer to that. This is a mock response."
-
-settings:
-  lag_enabled: true
-  lag_factor: 10  # Higher values = faster responses (10 = fast, 1 = slow)
-```
-
-### Network Lag Simulation
-
-The server can simulate network latency for more realistic testing scenarios. This is controlled by two settings:
-
-- `lag_enabled`: When true, enables artificial network lag
-- `lag_factor`: Controls the speed of responses
-  - Higher values (e.g., 10) result in faster responses
-  - Lower values (e.g., 1) result in slower responses
-  - Affects both streaming and non-streaming responses
-
-For streaming responses, the lag is applied per-character with slight random variations to simulate realistic network conditions.
-
-### Hot Reloading
-
-The server automatically detects changes to `responses.yml` and reloads the configuration without restarting the server.
-
 ## Testing
 
 To run the tests:
@@ -171,6 +172,8 @@ poetry run pytest
 ## Contributing
 
 Contributions are welcome! Please open an issue or submit a PR.
+
+Check out the [CodeGate](https://github.com/stacklok/codegate) project when you're done here!
 
 ## License
 
