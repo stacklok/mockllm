@@ -2,18 +2,19 @@ from abc import ABC, abstractmethod
 from typing import Any, AsyncGenerator, Dict, Union
 
 from fastapi import Response
+from fastapi.responses import StreamingResponse
 
 
 class LLMProvider(ABC):
     @abstractmethod
     async def handle_chat_completion(
         self, request: Any
-    ) -> Union[Response, Dict[Any, Any]]:
+    ) -> Union[Dict[str, Any], StreamingResponse]:
         pass
 
     @abstractmethod
-    def generate_stream_response(
+    async def generate_stream_response(
         self, content: str, model: str
     ) -> AsyncGenerator[str, None]:
-        """Note: Removed async from method signature since AsyncGenerator is already async"""
+        """Generate streaming response"""
         yield ""  # pragma: no cover

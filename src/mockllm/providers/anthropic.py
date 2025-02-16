@@ -1,6 +1,6 @@
 from typing import Any, AsyncGenerator, Dict, Union
 
-from fastapi import HTTPException, Response
+from fastapi import HTTPException
 from fastapi.responses import StreamingResponse
 
 from ..config import ResponseConfig
@@ -18,7 +18,7 @@ class AnthropicProvider(LLMProvider):
     def __init__(self, response_config: ResponseConfig):
         self.response_config = response_config
 
-    def generate_stream_response(
+    async def generate_stream_response(
         self, content: str, model: str
     ) -> AsyncGenerator[str, None]:
         async for chunk in self.response_config.get_streaming_response_with_lag(
@@ -33,7 +33,7 @@ class AnthropicProvider(LLMProvider):
 
     async def handle_chat_completion(
         self, request: AnthropicChatRequest
-    ) -> Union[Response, Dict[Any, Any]]:
+    ) -> Union[Dict[str, Any], StreamingResponse]:
         last_message = next(
             (msg for msg in reversed(request.messages) if msg.role == "user"), None
         )

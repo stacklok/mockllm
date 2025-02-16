@@ -79,7 +79,7 @@ async def anthropic_stream_response(
     yield "data: [DONE]\n\n"
 
 
-@app.post("/v1/chat/completions")
+@app.post("/v1/chat/completions", response_model=None)
 async def openai_chat_completion(
     request: OpenAIChatRequest,
 ) -> Union[Dict[str, Any], StreamingResponse]:
@@ -101,7 +101,7 @@ async def openai_chat_completion(
         ) from e
 
 
-@app.post("/v1/messages")
+@app.post("/v1/messages", response_model=None)
 async def anthropic_chat_completion(
     request: AnthropicChatRequest,
 ) -> Union[Dict[str, Any], StreamingResponse]:
