@@ -28,6 +28,7 @@ app = FastAPI(title="Mock LLM Server")
 
 response_config = ResponseConfig()
 
+
 def count_tokens(text: str, model: str) -> int:
     """Get realistic token count for text using tiktoken"""
     try:
@@ -36,6 +37,7 @@ def count_tokens(text: str, model: str) -> int:
     except Exception:
         # Fallback to rough estimation if model not supported
         return len(text.split())
+
 
 async def openai_stream_response(content: str, model: str) -> AsyncGenerator[str, None]:
     """Generate OpenAI-style streaming response in SSE format."""
