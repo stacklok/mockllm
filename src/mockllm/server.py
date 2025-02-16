@@ -1,6 +1,7 @@
 import logging
 from typing import AsyncGenerator, Union
 
+import tiktoken
 from fastapi import FastAPI, HTTPException
 from fastapi.responses import StreamingResponse
 from pythonjsonlogger import jsonlogger
@@ -26,6 +27,16 @@ logger = logging.getLogger(__name__)
 app = FastAPI(title="Mock LLM Server")
 
 response_config = ResponseConfig()
+
+
+def count_tokens(text: str, model: str) -> int:
+    """Get realistic token count for text using tiktoken"""
+    try:
+        encoding = tiktoken.encoding_for_model(model)
+        return len(encoding.encode(text))
+    except Exception:
+        # Fallback to rough estimation if model not supported
+        return len(text.split())
 
 
 async def openai_stream_response(content: str, model: str) -> AsyncGenerator[str, None]:
@@ -102,8 +113,8 @@ async def openai_chat_completion(
         )
 
         # Calculate mock token counts
-        prompt_tokens = len(str(request.messages).split())
-        completion_tokens = len(response_content.split())
+        prompt_tokens = count_tokens(str(request.messages), request.model)
+        completion_tokens = count_tokens(response_content, request.model)
         total_tokens = prompt_tokens + completion_tokens
 
         return OpenAIChatResponse(
@@ -165,8 +176,8 @@ async def anthropic_chat_completion(
         )
 
         # Calculate mock token counts
-        prompt_tokens = len(str(request.messages).split())
-        completion_tokens = len(response_content.split())
+        prompt_tokens = count_tokens(str(request.messages), request.model)
+        completion_tokens = count_tokens(response_content, request.model)
         total_tokens = prompt_tokens + completion_tokens
 
         return AnthropicChatResponse(
