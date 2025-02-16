@@ -1,7 +1,7 @@
 import logging
-import tiktoken
 from typing import AsyncGenerator, Union
 
+import tiktoken
 from fastapi import FastAPI, HTTPException
 from fastapi.responses import StreamingResponse
 from pythonjsonlogger import jsonlogger
