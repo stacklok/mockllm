@@ -53,7 +53,7 @@ class ResponseConfig:
     def get_response(self, prompt: str) -> str:
         """Get response for a given prompt."""
         self.load_responses()  # Check for updates
-        return self.responses.get(prompt.lower().strip(), self.default_response)
+        return self.responses.get(prompt , self.default_response)
 
     def get_streaming_response(
         self, prompt: str, chunk_size: Optional[int] = None
