@@ -3,6 +3,7 @@
 [![CI](https://github.com/stacklok/mockllm/actions/workflows/ci.yml/badge.svg)](https://github.com/stacklok/mockllm/actions/workflows/ci.yml)
 [![PyPI version](https://badge.fury.io/py/mockllm.svg)](https://badge.fury.io/py/mockllm)
 [![License](https://img.shields.io/badge/License-Apache%202.0-blue.svg)](https://opensource.org/licenses/Apache-2.0)
+![mockllm-logo](assets/logo.png)
 
 An LLM simulator that mimics OpenAI and Anthropic API formats. Instead of calling
 a large language model, it uses predefined responses from a YAML configuration
