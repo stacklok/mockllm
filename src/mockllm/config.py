@@ -6,10 +6,10 @@ from typing import AsyncGenerator, Dict, Generator, Optional
 
 import yaml
 from fastapi import HTTPException
-from pythonjsonlogger import jsonlogger
+from pythonjsonlogger.json import JsonFormatter
 
 log_handler = logging.StreamHandler()
-log_handler.setFormatter(jsonlogger.JsonFormatter())
+log_handler.setFormatter(JsonFormatter())
 logging.basicConfig(level=logging.INFO, handlers=[log_handler])
 logger = logging.getLogger(__name__)
 
@@ -53,7 +53,7 @@ class ResponseConfig:
     def get_response(self, prompt: str) -> str:
         """Get response for a given prompt."""
         self.load_responses()  # Check for updates
-        return self.responses.get(prompt , self.default_response)
+        return self.responses.get(prompt, self.default_response)
 
     def get_streaming_response(
         self, prompt: str, chunk_size: Optional[int] = None
