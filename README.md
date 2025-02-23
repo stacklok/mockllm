@@ -32,6 +32,7 @@ Responses are configured in `responses.yml`. The file has three main sections:
 Example `responses.yml`:
 ```yaml
 responses:
+  "write a python function to calculate factorial": "def factorial(n):\n    if n == 0:\n        return 1\n    return n * factorial(n - 1)"
   "what colour is the sky?": "The sky is purple except on Tuesday when it is  hue green."
   "what is 2+2?": "2+2 equals 9."
 
