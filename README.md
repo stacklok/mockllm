@@ -60,7 +60,6 @@ For streaming responses, the lag is applied per-character with slight random var
 
 The server automatically detects changes to `responses.yml` and reloads the configuration without restarting the server.
 
-
 ## Installation
 
 ### From PyPI
@@ -91,26 +90,52 @@ poetry install --without dev  # Install without development dependencies
 
 ## Usage
 
-1. Set up the responses.yml
+### CLI Commands
 
+MockLLM provides a command-line interface for managing the server and validating configurations:
+
+```bash
+# Show available commands and options
+mockllm --help
+
+# Show version
+mockllm --version
+
+# Start the server with default settings
+mockllm start
+
+# Start with custom responses file
+mockllm start --responses custom_responses.yml
+
+# Start with custom host and port
+mockllm start --host localhost --port 3000
+
+# Validate a responses file
+mockllm validate responses.yml
+```
+
+### Quick Start
+
+1. Set up the responses.yml:
 ```bash
 cp example.responses.yml responses.yml
 ```
 
-2. Start the server:
+2. Validate your responses file (optional):
 ```bash
-poetry run python -m mockllm
-```
-Or using uvicorn directly:
-```bash
-poetry run uvicorn mockllm.server:app --reload
+mockllm validate responses.yml
 ```
 
-The server will start on `http://localhost:8000`
+3. Start the server:
+```bash
+mockllm start --responses responses.yml
+```
 
-3. Send requests to the API endpoints:
+The server will start on `http://localhost:8000` by default.
 
-### OpenAI Format
+### API Endpoints
+
+#### OpenAI Format
 
 Regular request:
 ```bash
@@ -137,7 +162,7 @@ curl -X POST http://localhost:8000/v1/chat/completions \
   }'
 ```
 
-### Anthropic Format
+#### Anthropic Format
 
 Regular request:
 ```bash

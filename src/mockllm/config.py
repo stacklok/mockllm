@@ -1,5 +1,6 @@
 import asyncio
 import logging
+import os
 import random
 from pathlib import Path
 from typing import AsyncGenerator, Dict, Generator, Optional
@@ -17,8 +18,10 @@ logger = logging.getLogger(__name__)
 class ResponseConfig:
     """Handles loading and managing response configurations from YAML."""
 
-    def __init__(self, yaml_path: str = "responses.yml"):
-        self.yaml_path = yaml_path
+    def __init__(self, yaml_path: str = None):
+        self.yaml_path = yaml_path or os.getenv(
+            "MOCKLLM_RESPONSES_FILE", "responses.yml"
+        )
         self.last_modified = 0
         self.responses: Dict[str, str] = {}
         self.default_response = "I don't know the answer to that."
@@ -53,7 +56,7 @@ class ResponseConfig:
     def get_response(self, prompt: str) -> str:
         """Get response for a given prompt."""
         self.load_responses()  # Check for updates
-        return self.responses.get(prompt , self.default_response)
+        return self.responses.get(prompt, self.default_response)
 
     def get_streaming_response(
         self, prompt: str, chunk_size: Optional[int] = None
