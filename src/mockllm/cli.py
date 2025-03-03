@@ -1,4 +1,5 @@
 from pathlib import Path
+from typing import Optional
 
 import click
 import uvicorn
@@ -8,7 +9,9 @@ from . import __version__
 from .config import ResponseConfig
 
 
-def validate_responses_file(ctx, param, value):
+def validate_responses_file(
+    ctx: click.Context, param: click.Parameter, value: Optional[str]
+) -> Optional[str]:
     """Validate the responses YAML file."""
     if not value:
         return None
@@ -32,7 +35,7 @@ def validate_responses_file(ctx, param, value):
 
 @click.group()
 @click.version_option(version=__version__)
-def cli():
+def cli() -> None:
     """MockLLM - A mock server that mimics OpenAI and Anthropic API formats."""
     pass
 
@@ -51,7 +54,7 @@ def cli():
 @click.option(
     "--reload", is_flag=True, help="Enable auto-reload on file changes", default=True
 )
-def start(responses, host, port, reload):
+def start(responses: str, host: str, port: int, reload: bool) -> None:
     """Start the MockLLM server."""
     if responses:
         click.echo(f"Using responses file: {responses}")
@@ -67,7 +70,7 @@ def start(responses, host, port, reload):
 
 @cli.command()
 @click.argument("responses_file", type=click.Path(exists=True))
-def validate(responses_file):
+def validate(responses_file: str) -> None:
     """Validate a responses YAML file."""
     try:
         config = ResponseConfig(responses_file)
@@ -80,6 +83,6 @@ def validate(responses_file):
         exit(1)
 
 
-def main():
+def main() -> None:
     """Entry point for the CLI."""
     cli()
