@@ -4,7 +4,7 @@ from typing import Any, AsyncGenerator, Dict, Union
 import tiktoken
 from fastapi import FastAPI, HTTPException
 from fastapi.responses import StreamingResponse
-from pythonjsonlogger import jsonlogger
+from pythonjsonlogger.json import JsonFormatter
 
 from .config import ResponseConfig
 from .models import (
@@ -20,7 +20,7 @@ from .providers.anthropic import AnthropicProvider
 from .providers.openai import OpenAIProvider
 
 log_handler = logging.StreamHandler()
-log_handler.setFormatter(jsonlogger.JsonFormatter())
+log_handler.setFormatter(JsonFormatter())
 logging.basicConfig(level=logging.INFO, handlers=[log_handler])
 logger = logging.getLogger(__name__)
 
