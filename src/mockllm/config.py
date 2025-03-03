@@ -1,8 +1,9 @@
 import asyncio
 import logging
+import os
 import random
 from pathlib import Path
-from typing import AsyncGenerator, Dict, Generator, Optional
+from typing import AsyncGenerator, Dict, Generator, Optional, cast
 
 import yaml
 from fastapi import HTTPException
@@ -17,8 +18,10 @@ logger = logging.getLogger(__name__)
 class ResponseConfig:
     """Handles loading and managing response configurations from YAML."""
 
-    def __init__(self, yaml_path: str = "responses.yml"):
-        self.yaml_path = yaml_path
+    def __init__(self, yaml_path: Optional[str] = None):
+        self.yaml_path = cast(
+            str, yaml_path or os.getenv("MOCKLLM_RESPONSES_FILE", "responses.yml")
+        )
         self.last_modified = 0
         self.responses: Dict[str, str] = {}
         self.default_response = "I don't know the answer to that."
@@ -29,9 +32,10 @@ class ResponseConfig:
     def load_responses(self) -> None:
         """Load or reload responses from YAML file if modified."""
         try:
-            current_mtime = Path(self.yaml_path).stat().st_mtime
+            path = Path(self.yaml_path)  # self.yaml_path is guaranteed to be str here
+            current_mtime = path.stat().st_mtime
             if current_mtime > self.last_modified:
-                with open(self.yaml_path, "r") as f:
+                with path.open("r") as f:
                     data = yaml.safe_load(f)
                     self.responses = data.get("responses", {})
                     self.default_response = data.get("defaults", {}).get(
